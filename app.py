@@ -109,6 +109,7 @@ adiantamentos = get_adiantamento(pag_toda.iloc[:,3:5])
 tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda.iloc[:,6:12])
 entradas = tables[0]
 saidas = tables[1]
+print('BOOOORA')
 
 #TODO se for do novo, encapsular vvv em função
 
