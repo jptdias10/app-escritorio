@@ -77,7 +77,6 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
     """
     df = remove_none_rows_and_cols(df)
     ixinits = get_ixinit_saidas(df)
-    entradas = df.iloc[:ixinits-2] #TODO Função get_entradas que já retorna a tabela entradas toda tratada
 
     entradas = get_entradas(df.iloc[:ixinits[0]-1])
 
