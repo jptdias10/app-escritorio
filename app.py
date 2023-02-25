@@ -9,6 +9,17 @@ def remove_none_rows_and_cols(df):
     df = df.dropna(axis=0, how='all')
     return df
 
+def row0_to_header( dfin: pd.DataFrame)->pd.DataFrame:
+    """ Get the top row and rename the columns with it
+    Args:
+        df (pd.DataFrame): DataFrame to replace header
+    Returns:
+        pd.DataFrame: DataFrame with header renamed
+    """
+    new_header = dfin.iloc[0] #grab the first row for the header
+    dfout = dfin[1:].copy() #take the data less the header row
+    dfout.columns = new_header #set the header row as the df header
+    return dfout
 def get_ixinit_saidas(df:pd.DataFrame):
     """Retorna os índices dos inícios das tabelas 'Entradas' e 'Saídas'
 
