@@ -101,8 +101,9 @@ workbook = openpyxl.load_workbook(file)
 sheets = workbook.sheetnames
 #TODO loop para ler página a página
 #TODO levando em conta que há 2 modelos, faça uma função para identificar pela data se é do formato antigo ou novo
-worksheet = workbook['MARÇO-16'] #TODO Remover
-pag_toda = pd.read_excel('Caixa.xlsm', sheet_name='MARÇO-16', engine='openpyxl')
+# worksheet = workbook['MARÇO-16'] #TODO Remover
+ws = 'MARÇO-16'
+pag_toda = pd.read_excel('Caixa.xlsm', sheet_name=ws, engine='openpyxl')
 pag_toda.replace({None:np.nan}, inplace=True)
 
 #TODO se for do antigo, encapsular vvv em função
