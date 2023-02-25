@@ -81,7 +81,7 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
 
     entradas = get_entradas(df.iloc[:ixinits[0]-1])
 
-    #TODO Função get_saidas que já retorna a tabela saidas toda tratada
+    #TODO pegar o índice inicial da tabela saidas
     saidas = get_saidas(df.iloc[ixinits[1]-1:])
 
 
@@ -93,13 +93,13 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
 #     return fechamento
 
 
-def get_total_indices(df):
+def get_total_indices(df:pd.DataFrame):
     return df.loc[df.iloc[:, 0] == 'TOTAL'].index
 
-def get_data_indices(df):
+def get_data_indices(df:pd.DataFrame):
     return df.loc[df.iloc[:, 0] == 'DATA'].index
 
-def get_adiantamento(df):
+def get_adiantamento(df:pd.DataFrame)->pd.DataFrame:
     #TODO Adicionar coluna de motivo caso nao tenha
     #TODO Abaixar o titulo da coluna res
     li_dfs = []
@@ -130,7 +130,7 @@ sheets = workbook.sheetnames
 #TODO loop para ler página a página
 #TODO levando em conta que há 2 modelos, faça uma função para identificar pela data se é do formato antigo ou novo
 # worksheet = workbook['MARÇO-16'] #TODO Remover
-ws = 'MARÇO-16'
+ws = 'ABRIL-16'
 pag_toda = pd.read_excel('Caixa.xlsm', sheet_name=ws, engine='openpyxl')
 pag_toda.replace({None:np.nan}, inplace=True)
 
