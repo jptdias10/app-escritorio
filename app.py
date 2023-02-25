@@ -100,9 +100,29 @@ def get_data_indices(df):
     return df.loc[df.iloc[:, 0] == 'DATA'].index
 
 def get_adiantamento(df):
-    #TODO Função get_adiantamento que já retorna a tabela adiantamento toda tratada
     #TODO Adicionar coluna de motivo caso nao tenha
-    return remove_none_rows_and_cols(df)
+    #TODO Abaixar o titulo da coluna res
+    li_dfs = []
+    adiantamento = remove_none_rows_and_cols(df)
+    adiantamento = row0_to_header(adiantamento)
+    adiantamento.reset_index(inplace=True)
+    adiantamento.drop('index', axis=1, inplace=True)
+    indices_fim = get_total_indices(adiantamento)
+    indices_inicio = get_data_indices(adiantamento)
+    for i in range(len(indices_fim)):
+        if i == 0:
+            df_aux = adiantamento.iloc[indices_inicio[i]:indices_fim[i]]
+            pessoa = df_aux.columns[0]
+            df_aux = row0_to_header(df_aux)
+        else:
+            df_aux = adiantamento.iloc[indices_inicio[i]-1:indices_fim[i]]
+            pessoa = df_aux.iloc[0,0]
+            df_aux = row0_to_header(df_aux)
+            df_aux = row0_to_header(df_aux)
+        df_aux['RESPONSAVEL'] = pessoa
+        li_dfs.append(df_aux)
+    adiantamento = pd.concat(li_dfs)
+    return adiantamento
 
 file = 'Caixa.xlsm'
 workbook = openpyxl.load_workbook(file)
