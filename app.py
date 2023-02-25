@@ -60,3 +60,12 @@ sheets = workbook.sheetnames
 sheet = workbook['MARÇO-16'].values
 pag_toda = pd.DataFrame(sheet)
 pag_toda.replace({None:np.nan}, inplace=True)
+#TODO se for do antigo, encapsular vvv em função
+fechamento = get_fechamento(pag_toda[[0,1]])
+adiantamentos = get_adiantamento(pag_toda[[3,4]])
+tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda[[6,7,8,9,10,11]])
+entradas = tables[0]
+saidas = tables[1]
+
+#TODO se for do novo, encapsular vvv em função
+
