@@ -20,6 +20,16 @@ def row0_to_header( dfin: pd.DataFrame)->pd.DataFrame:
     dfout = dfin[1:].copy() #take the data less the header row
     dfout.columns = new_header #set the header row as the df header
     return dfout
+def fill_date(df:pd.DataFrame)->pd.DataFrame:
+    """Fill NaN with min mode of column
+
+    Args:
+        df (pd.DataFrame): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    return df['DATA'].fillna(df['DATA'].mode().min())
 def get_ixinit_saidas(df:pd.DataFrame):
     """Retorna os índices dos inícios das tabelas 'Entradas' e 'Saídas'
 
