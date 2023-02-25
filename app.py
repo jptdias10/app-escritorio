@@ -33,28 +33,28 @@ def fill_date(df:pd.DataFrame)->pd.DataFrame:
     return df['DATA'].fillna(df['DATA'].mode().min())
 
 def get_ixinit_saidas(df:pd.DataFrame):
-    """Retorna os índices dos inícios das tabelas 'Entradas' e 'Saídas'
+#     """Retorna os índices dos inícios das tabelas 'Entradas' e 'Saídas'
 
-    Args:
-        df (pd.DataFrame): _description_
+#     Args:
+#         df (pd.DataFrame): _description_
 
-    Returns:
-        List[index]: Indícies dos inícios das tabelas 'Entradas' e 'Saídas'
-    """
+#     Returns:
+#         List[index]: Indícies dos inícios das tabelas 'Entradas' e 'Saídas'
+#     """
+    indices_dt = get_data_indices(df)
+    ixinit_entradas = indices_dt[0]
+    ixinit_saidas = indices_dt[1]
     if (df.iloc[:,0].str.contains('TOTAL') == True).any():
         ixend_entradas = (df.iloc[:,0].str.contains('TOTAL') == True).idxmax()
     else:
         ixend_entradas = None
-    if (df.iloc[:,0].str.contains('SAÍDAS') == True).any():
-        ixinit_saidas = (df.iloc[:,0].str.contains('SAÍDAS') == True).idxmax()
-    else:
-        ixinit_saidas = None
-    return [ixend_entradas, ixinit_saidas]
+    return [ixinit_entradas, ixend_entradas, ixinit_saidas]
 
 def get_entradas(df:pd.DataFrame)->pd.DataFrame:
     #TODO Função get_entradas que já retorna a tabela entradas toda tratada
     entradas = row0_to_header(df)
     entradas = entradas.drop(entradas[entradas['DATA'] == 'TOTAL'].index)
+    entradas = entradas.dropna(subset=['VALOR'])
     entradas['DATA'] = fill_date(entradas)
     return entradas
 
@@ -78,13 +78,8 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
     """
     df = remove_none_rows_and_cols(df)
     ixinits = get_ixinit_saidas(df)
-
-    entradas = get_entradas(df.iloc[:ixinits[0]-1])
-
-    #TODO pegar o índice inicial da tabela saidas
-    saidas = get_saidas(df.iloc[ixinits[1]-1:])
-
-
+    entradas = get_entradas(df.iloc[ixinits[0]:ixinits[1]])
+    saidas = get_saidas(df.iloc[ixinits[2]-2:])
     return [entradas, saidas]
 
 # def get_fechamento(df):
@@ -130,7 +125,7 @@ sheets = workbook.sheetnames
 #TODO loop para ler página a página
 #TODO levando em conta que há 2 modelos, faça uma função para identificar pela data se é do formato antigo ou novo
 # worksheet = workbook['MARÇO-16'] #TODO Remover
-ws = 'ABRIL-16'
+ws = 'MARÇO-16'
 pag_toda = pd.read_excel('Caixa.xlsm', sheet_name=ws, engine='openpyxl')
 pag_toda.replace({None:np.nan}, inplace=True)
 
