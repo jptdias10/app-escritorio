@@ -9,7 +9,7 @@ def remove_none_rows_and_cols(df):
     df = df.dropna(axis=0, how='all')
     return df
 
-def get_ixinit_entradas_saidas(df:pd.DataFrame):
+def get_ixinit_saidas(df:pd.DataFrame):
     """Retorna os índices dos inícios das tabelas 'Entradas' e 'Saídas'
 
     Args:
@@ -18,15 +18,11 @@ def get_ixinit_entradas_saidas(df:pd.DataFrame):
     Returns:
         List[index]: Indícies dos inícios das tabelas 'Entradas' e 'Saídas'
     """
-    if (df[6].str.contains('ENTRADAS') == True).any():
-        ixinit_entrada = (df[6].str.contains('ENTRADAS') == True).idxmax()
-    else:
-        ixinit_entrada = None
-    if (df[6].str.contains('SAÍDAS') == True).any():
-        ixinit_saidas = (df[6].str.contains('SAÍDAS') == True).idxmax()
+    if (df.iloc[:,0].str.contains('SAÍDAS') == True).any():
+        ixinit_saidas = (df.iloc[:,0].str.contains('SAÍDAS') == True).idxmax()
     else:
         ixinit_saidas = None
-    return [ixinit_entrada,ixinit_saidas]
+    return ixinit_saidas
 
 def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
     """Separa duas tabelas com os índices de início já identificados
@@ -39,10 +35,13 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
         List[pd.DataFrame]:
     """
     df = remove_none_rows_and_cols(df)
-    ixinits = get_ixinit_entradas_saidas(df)
-    entradas = df.iloc[ixinits[0]:ixinits[1]-2] #TODO Função get_entradas que já retorna a tabela entradas toda tratada
-    saidas = df.iloc[ixinits[1]-2:] #TODO Função get_saidas que já retorna a tabela saidas toda tratada
+    ixinits = get_ixinit_saidas(df)
+    print(ixinits)
+    entradas = df.iloc[:ixinits-2] #TODO Função get_entradas que já retorna a tabela entradas toda tratada
+    print('entradas')
+    saidas = df.iloc[ixinits-2:] #TODO Função get_saidas que já retorna a tabela saidas toda tratada
     return [entradas, saidas]
+
 
 def get_fechamento(df):
     #TODO Função get_fechamento que já retorna a tabela fechamento toda tratada
@@ -57,13 +56,13 @@ workbook = openpyxl.load_workbook(file)
 sheets = workbook.sheetnames
 #TODO loop para ler página a página
 #TODO levando em conta que há 2 modelos, faça uma função para identificar pela data se é do formato antigo ou novo
-sheet = workbook['MARÇO-16'].values
-pag_toda = pd.DataFrame(sheet)
+worksheet = workbook['MARÇO-16'] #TODO Remover
+pag_toda = pd.read_excel('Caixa.xlsm', sheet_name='MARÇO-16', engine='openpyxl')
 pag_toda.replace({None:np.nan}, inplace=True)
 #TODO se for do antigo, encapsular vvv em função
-fechamento = get_fechamento(pag_toda[[0,1]])
-adiantamentos = get_adiantamento(pag_toda[[3,4]])
-tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda[[6,7,8,9,10,11]])
+fechamento = get_fechamento(pag_toda.iloc[:,:2])
+adiantamentos = get_adiantamento(pag_toda.iloc[:,3:5])
+tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda.iloc[:,6:12])
 entradas = tables[0]
 saidas = tables[1]
 
