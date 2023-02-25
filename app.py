@@ -20,6 +20,7 @@ def row0_to_header( dfin: pd.DataFrame)->pd.DataFrame:
     dfout = dfin[1:].copy() #take the data less the header row
     dfout.columns = new_header #set the header row as the df header
     return dfout
+
 def fill_date(df:pd.DataFrame)->pd.DataFrame:
     """Fill NaN with min mode of column
 
@@ -103,6 +104,7 @@ sheets = workbook.sheetnames
 worksheet = workbook['MARÇO-16'] #TODO Remover
 pag_toda = pd.read_excel('Caixa.xlsm', sheet_name='MARÇO-16', engine='openpyxl')
 pag_toda.replace({None:np.nan}, inplace=True)
+
 #TODO se for do antigo, encapsular vvv em função
 fechamento = get_fechamento(pag_toda.iloc[:,:2])
 adiantamentos = get_adiantamento(pag_toda.iloc[:,3:5])
