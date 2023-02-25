@@ -87,9 +87,17 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
 
     return [entradas, saidas]
 
-def get_fechamento(df):
-    #TODO Função get_fechamento que já retorna a tabela fechamento toda tratada
-    return remove_none_rows_and_cols(df)
+# def get_fechamento(df):
+#     #TODO Função get_fechamento que já retorna a tabela fechamento toda tratada
+#     fechamento = remove_none_rows_and_cols(df)
+#     return fechamento
+
+
+def get_total_indices(df):
+    return df.loc[df.iloc[:, 0] == 'TOTAL'].index
+
+def get_data_indices(df):
+    return df.loc[df.iloc[:, 0] == 'DATA'].index
 
 def get_adiantamento(df):
     #TODO Função get_adiantamento que já retorna a tabela adiantamento toda tratada
@@ -107,7 +115,7 @@ pag_toda = pd.read_excel('Caixa.xlsm', sheet_name=ws, engine='openpyxl')
 pag_toda.replace({None:np.nan}, inplace=True)
 
 #TODO se for do antigo, encapsular vvv em função
-fechamento = get_fechamento(pag_toda.iloc[:,:2])
+# fechamento = get_fechamento(pag_toda.iloc[:,:2])
 adiantamentos = get_adiantamento(pag_toda.iloc[:,3:5])
 tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda.iloc[:,6:12])
 entradas = tables[0]
