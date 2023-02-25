@@ -56,6 +56,7 @@ def get_entradas(df:pd.DataFrame)->pd.DataFrame:
     entradas = entradas.drop(entradas[entradas['DATA'] == 'TOTAL'].index)
     entradas = entradas.dropna(subset=['VALOR'])
     entradas['DATA'] = fill_date(entradas)
+    entradas = remove_none_rows_and_cols(entradas)
     return entradas
 
 def get_saidas(df:pd.DataFrame):
@@ -64,6 +65,7 @@ def get_saidas(df:pd.DataFrame):
     saidas = saidas.dropna(subset=['VALOR'])
     saidas['DATA'] = fill_date(saidas)
     saidas = saidas[['DATA', 'VALOR', 'MOTIVO']]
+    saidas = remove_none_rows_and_cols(saidas)
     return saidas
 
 def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
@@ -76,17 +78,10 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
     Returns:
         List[pd.DataFrame]:
     """
-    df = remove_none_rows_and_cols(df)
     ixinits = get_ixinit_saidas(df)
     entradas = get_entradas(df.iloc[ixinits[0]:ixinits[1]])
-    saidas = get_saidas(df.iloc[ixinits[2]-2:])
+    saidas = get_saidas(df.iloc[ixinits[2]:])
     return [entradas, saidas]
-
-# def get_fechamento(df):
-#     #TODO Função get_fechamento que já retorna a tabela fechamento toda tratada
-#     fechamento = remove_none_rows_and_cols(df)
-#     return fechamento
-
 
 def get_total_indices(df:pd.DataFrame):
     return df.loc[df.iloc[:, 0] == 'TOTAL'].index
@@ -96,7 +91,6 @@ def get_data_indices(df:pd.DataFrame):
 
 def get_adiantamento(df:pd.DataFrame)->pd.DataFrame:
     #TODO Adicionar coluna de motivo caso nao tenha
-    #TODO Abaixar o titulo da coluna res
     li_dfs = []
     adiantamento = remove_none_rows_and_cols(df)
     adiantamento = row0_to_header(adiantamento)
@@ -125,17 +119,18 @@ sheets = workbook.sheetnames
 #TODO loop para ler página a página
 #TODO levando em conta que há 2 modelos, faça uma função para identificar pela data se é do formato antigo ou novo
 # worksheet = workbook['MARÇO-16'] #TODO Remover
-ws = 'MARÇO-16'
-pag_toda = pd.read_excel('Caixa.xlsm', sheet_name=ws, engine='openpyxl')
-pag_toda.replace({None:np.nan}, inplace=True)
+for sheet in sheets:
+    print(sheet)
+    pag_toda = pd.read_excel('Caixa.xlsm', sheet_name=sheet, engine='openpyxl')
+    pag_toda.replace({None:np.nan}, inplace=True)
 
-#TODO se for do antigo, encapsular vvv em função
-# fechamento = get_fechamento(pag_toda.iloc[:,:2])
-adiantamentos = get_adiantamento(pag_toda.iloc[:,3:5])
-tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda.iloc[:,6:12])
-entradas = tables[0]
-saidas = tables[1]
-print('BOOOORA')
+    #TODO se for do antigo, encapsular vvv em função
+    # fechamento = get_fechamento(pag_toda.iloc[:,:2])
+    adiantamentos = get_adiantamento(pag_toda.iloc[:,3:5])
+    tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda.iloc[:,6:12])
+    entradas = tables[0]
+    saidas = tables[1]
+    print('BOOOORA')
 
 #TODO se for do novo, encapsular vvv em função
 
