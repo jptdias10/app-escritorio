@@ -92,6 +92,7 @@ def get_fechamento(df):
 
 def get_adiantamento(df):
     #TODO Função get_adiantamento que já retorna a tabela adiantamento toda tratada
+    #TODO Adicionar coluna de motivo caso nao tenha
     return remove_none_rows_and_cols(df)
 
 file = 'Caixa.xlsm'
