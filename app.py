@@ -32,21 +32,6 @@ def fill_date(df:pd.DataFrame)->pd.DataFrame:
     """
     return df['DATA'].fillna(df['DATA'].mode().min())
 
-def get_entradas(df:pd.DataFrame)->pd.DataFrame:
-    #TODO Função get_entradas que já retorna a tabela entradas toda tratada
-    entradas = row0_to_header(df)
-    entradas = entradas.drop(entradas[entradas['DATA'] == 'TOTAL'].index)
-    entradas['DATA'] = fill_date(entradas)
-    return entradas
-
-def get_saidas(df:pd.DataFrame):
-    #TODO Função get_saidas que já retorna a tabela saidas toda tratada
-    saidas = row0_to_header(df)
-    saidas = saidas.dropna(subset=['VALOR'])
-    saidas['DATA'] = fill_date(saidas)
-    saidas = saidas[['DATA', 'VALOR', 'MOTIVO']]
-    return saidas
-
 def get_ixinit_saidas(df:pd.DataFrame):
     """Retorna os índices dos inícios das tabelas 'Entradas' e 'Saídas'
 
@@ -65,6 +50,21 @@ def get_ixinit_saidas(df:pd.DataFrame):
     else:
         ixinit_saidas = None
     return [ixend_entradas, ixinit_saidas]
+
+def get_entradas(df:pd.DataFrame)->pd.DataFrame:
+    #TODO Função get_entradas que já retorna a tabela entradas toda tratada
+    entradas = row0_to_header(df)
+    entradas = entradas.drop(entradas[entradas['DATA'] == 'TOTAL'].index)
+    entradas['DATA'] = fill_date(entradas)
+    return entradas
+
+def get_saidas(df:pd.DataFrame):
+    #TODO Função get_saidas que já retorna a tabela saidas toda tratada
+    saidas = row0_to_header(df)
+    saidas = saidas.dropna(subset=['VALOR'])
+    saidas['DATA'] = fill_date(saidas)
+    saidas = saidas[['DATA', 'VALOR', 'MOTIVO']]
+    return saidas
 
 def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
     """Separa duas tabelas com os índices de início já identificados
