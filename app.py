@@ -30,6 +30,22 @@ def fill_date(df:pd.DataFrame)->pd.DataFrame:
         _type_: _description_
     """
     return df['DATA'].fillna(df['DATA'].mode().min())
+
+def get_entradas(df:pd.DataFrame)->pd.DataFrame:
+    #TODO Função get_entradas que já retorna a tabela entradas toda tratada
+    entradas = row0_to_header(df)
+    entradas = entradas.drop(entradas[entradas['DATA'] == 'TOTAL'].index)
+    entradas['DATA'] = fill_date(entradas)
+    return entradas
+
+def get_saidas(df:pd.DataFrame):
+    #TODO Função get_saidas que já retorna a tabela saidas toda tratada
+    saidas = row0_to_header(df)
+    saidas = saidas.dropna(subset=['VALOR'])
+    saidas['DATA'] = fill_date(saidas)
+    saidas = saidas[['DATA', 'VALOR', 'MOTIVO']]
+    return saidas
+
 def get_ixinit_saidas(df:pd.DataFrame):
     """Retorna os índices dos inícios das tabelas 'Entradas' e 'Saídas'
 
@@ -39,11 +55,15 @@ def get_ixinit_saidas(df:pd.DataFrame):
     Returns:
         List[index]: Indícies dos inícios das tabelas 'Entradas' e 'Saídas'
     """
+    if (df.iloc[:,0].str.contains('TOTAL') == True).any():
+        ixend_entradas = (df.iloc[:,0].str.contains('TOTAL') == True).idxmax()
+    else:
+        ixend_entradas = None
     if (df.iloc[:,0].str.contains('SAÍDAS') == True).any():
         ixinit_saidas = (df.iloc[:,0].str.contains('SAÍDAS') == True).idxmax()
     else:
         ixinit_saidas = None
-    return ixinit_saidas
+    return [ixend_entradas, ixinit_saidas]
 
 def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
     """Separa duas tabelas com os índices de início já identificados
@@ -57,12 +77,15 @@ def get_entradas_saidas(df:pd.DataFrame)->List[pd.DataFrame]:
     """
     df = remove_none_rows_and_cols(df)
     ixinits = get_ixinit_saidas(df)
-    print(ixinits)
     entradas = df.iloc[:ixinits-2] #TODO Função get_entradas que já retorna a tabela entradas toda tratada
-    print('entradas')
-    saidas = df.iloc[ixinits-2:] #TODO Função get_saidas que já retorna a tabela saidas toda tratada
-    return [entradas, saidas]
 
+    entradas = get_entradas(df.iloc[:ixinits[0]-1])
+
+    #TODO Função get_saidas que já retorna a tabela saidas toda tratada
+    saidas = get_saidas(df.iloc[ixinits[1]-1:])
+
+
+    return [entradas, saidas]
 
 def get_fechamento(df):
     #TODO Função get_fechamento que já retorna a tabela fechamento toda tratada
