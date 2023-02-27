@@ -107,8 +107,6 @@ def get_adiantamento(df:pd.DataFrame)->pd.DataFrame:
     adiantamento = row0_to_header(adiantamento)
     adiantamento.reset_index(inplace=True)
     adiantamento.drop('index', axis=1, inplace=True)
-    indices_fim = get_total_indices(adiantamento)
-    indices_inicio = get_data_indices(adiantamento)
     indices = verifica_indices(get_data_indices(adiantamento),
                                get_total_indices(adiantamento))
     indices_inicio = indices[0]
