@@ -21,6 +21,19 @@ def row0_to_header( dfin: pd.DataFrame)->pd.DataFrame:
     dfout.columns = new_header #set the header row as the df header
     return dfout
 
+def verifica_indices(indices_inicio, indices_fim):
+    if len(indices_fim) > len(indices_inicio):
+        for i in range(len(indices_inicio)):
+            if indices_inicio[i] >= indices_fim[i]:
+                print(f"Erro: o índice de início {indices_inicio[i]} é maior ou igual ao índice de fim {indices_fim[i]} na posição {i}")
+                indices_fim.pop(i)
+                return [indices_inicio, indices_fim]
+        print("As listas têm tamanhos diferentes, mas os índices estão em ordem crescente")
+        return [indices_inicio, indices_fim]
+    else:
+        print("As listas têm o mesmo tamanho ou a lista de índices de início é maior que a lista de índices de fim")
+        return [indices_inicio, indices_fim]
+
 def fill_date(df:pd.DataFrame)->pd.DataFrame:
     """Fill NaN with min mode of column
 
@@ -96,6 +109,10 @@ def get_adiantamento(df:pd.DataFrame)->pd.DataFrame:
     adiantamento.drop('index', axis=1, inplace=True)
     indices_fim = get_total_indices(adiantamento)
     indices_inicio = get_data_indices(adiantamento)
+    indices = verifica_indices(get_data_indices(adiantamento),
+                               get_total_indices(adiantamento))
+    indices_inicio = indices[0]
+    indices_fim = indices[1]
     for i in range(len(indices_fim)):
         if i == 0:
             df_aux = adiantamento.iloc[indices_inicio[i]:indices_fim[i]]
