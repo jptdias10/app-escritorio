@@ -51,7 +51,6 @@ def get_ixinit_saidas(df:pd.DataFrame):
     return [ixinit_entradas, ixend_entradas, ixinit_saidas]
 
 def get_entradas(df:pd.DataFrame)->pd.DataFrame:
-    #TODO Função get_entradas que já retorna a tabela entradas toda tratada
     entradas = row0_to_header(df)
     entradas = entradas.drop(entradas[entradas['DATA'] == 'TOTAL'].index)
     entradas = entradas.dropna(subset=['VALOR'])
@@ -60,7 +59,6 @@ def get_entradas(df:pd.DataFrame)->pd.DataFrame:
     return entradas
 
 def get_saidas(df:pd.DataFrame):
-    #TODO Função get_saidas que já retorna a tabela saidas toda tratada
     saidas = row0_to_header(df)
     saidas = saidas.dropna(subset=['VALOR'])
     saidas['DATA'] = fill_date(saidas)
@@ -116,9 +114,7 @@ def get_adiantamento(df:pd.DataFrame)->pd.DataFrame:
 file = 'Caixa.xlsm'
 workbook = openpyxl.load_workbook(file)
 sheets = workbook.sheetnames
-#TODO loop para ler página a página
-#TODO levando em conta que há 2 modelos, faça uma função para identificar pela data se é do formato antigo ou novo
-# worksheet = workbook['MARÇO-16'] #TODO Remover
+#TODO levando em conta que há 3 modelos(pré março17, pre fev-21, atual)
 for sheet in sheets:
     print(sheet)
     pag_toda = pd.read_excel('Caixa.xlsm', sheet_name=sheet, engine='openpyxl')
