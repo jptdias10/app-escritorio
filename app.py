@@ -131,6 +131,10 @@ def get_adiantamento(df:pd.DataFrame)->pd.DataFrame:
 file = 'Caixa.xlsm'
 workbook = openpyxl.load_workbook(file)
 sheets = workbook.sheetnames
+entradas:List[pd.DataFrame] = []
+saidas:List[pd.DataFrame] = []
+adiantamentos:List[pd.DataFrame] = []
+
 #TODO levando em conta que há 3 modelos(pré março17, pre fev-21, atual)
 for sheet in sheets:
     print(sheet)
@@ -139,11 +143,11 @@ for sheet in sheets:
 
     #TODO se for do antigo, encapsular vvv em função
     # fechamento = get_fechamento(pag_toda.iloc[:,:2])
-    adiantamentos = get_adiantamento(pag_toda.iloc[:,3:5])
+    adiantamentos.append(get_adiantamento(pag_toda.iloc[:,3:5]))
     tables: List[pd.DataFrame] = get_entradas_saidas(pag_toda.iloc[:,6:12])
-    entradas = tables[0]
-    saidas = tables[1]
-    print('BOOOORA')
-
+    entradas.append(tables[0])
+    saidas.append(tables[1])
+    print('OK')
+print('Rodou tudo')
 #TODO se for do novo, encapsular vvv em função
 
